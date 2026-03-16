@@ -1,5 +1,5 @@
 package com.example.ragcode.service;
-
+import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +18,7 @@ public class GrokService {
             .baseUrl("https://api.x.ai/v1")
             .build();
 
+    @SuppressWarnings("unchecked")
     public String generateResponse(String prompt) {
 
         Map<String, Object> request = Map.of(
@@ -27,7 +28,7 @@ public class GrokService {
                 )
         );
 
-        Map response = webClient.post()
+        Map<String, Object> response = webClient.post()
                 .uri("/chat/completions")
                 .header("Authorization", "Bearer " + apiKey)
                 .bodyValue(request)
@@ -35,8 +36,11 @@ public class GrokService {
                 .bodyToMono(Map.class)
                 .block();
 
-        List choices = (List) response.get("choices");
-        Map message = (Map) ((Map) choices.get(0)).get("message");
+        List<Map<String, Object>> choices =
+                (List<Map<String, Object>>) response.get("choices");
+
+        Map<String, Object> message =
+                (Map<String, Object>) choices.get(0).get("message");
 
         return (String) message.get("content");
     }

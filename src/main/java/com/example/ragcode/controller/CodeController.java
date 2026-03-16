@@ -19,6 +19,10 @@ public class CodeController {
         service.processFile(file);
         return "File processed successfully";
     }
+        @GetMapping("/test")
+    public String test() {
+        return "CodeSentinel running";
+    }
 
     @PostMapping("/ask")
     public String askQuestion(@RequestBody String question) {
