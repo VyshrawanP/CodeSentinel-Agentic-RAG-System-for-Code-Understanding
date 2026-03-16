@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/code")
+@CrossOrigin(origins = "*") // allow browser requests
 public class CodeController {
 
     private final CodeProcessingService service;
@@ -19,7 +20,8 @@ public class CodeController {
         service.processFile(file);
         return "File processed successfully";
     }
-        @GetMapping("/test")
+
+    @GetMapping("/test")
     public String test() {
         return "CodeSentinel running";
     }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CodeSentinel</title>
+
+<link rel="stylesheet" href="/css/styles.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="sidebar">
+        <h2>CodeSentinel</h2>
+
+        <input type="file" id="fileUpload" />
+
+        <button onclick="uploadFile()">Upload Code</button>
+
+    </div>
+
+    <div class="chat-container">
+
+        <div id="chat"></div>
+
+        <div class="input-area">
+
+            <input
+                id="questionInput"
+                type="text"
+                placeholder="Ask about your code..."
+            />
+
+            <button onclick="askQuestion()">Send</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/js/app.js"></script>
+
+</body>
+</html>
