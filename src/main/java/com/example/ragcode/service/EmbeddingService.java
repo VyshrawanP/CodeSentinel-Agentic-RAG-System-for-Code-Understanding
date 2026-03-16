@@ -1,18 +1,22 @@
 package com.example.ragcode.service;
 
 import org.springframework.stereotype.Service;
+import com.example.ragcode.vector.ChromaClient;
 
 @Service
 public class EmbeddingService {
 
+    private final ChromaClient chromaClient;
+
+    public EmbeddingService(ChromaClient chromaClient) {
+        this.chromaClient = chromaClient;
+    }
+
     public void storeEmbedding(String chunk) {
 
-        // Step 1
-        // call embedding API
+        chromaClient.storeChunk(chunk);
 
-        // Step 2
-        // store vector + chunk into vector DB
-
-        System.out.println("Embedding stored for chunk");
+        System.out.println("Embedding stored for chunk:");
+        System.out.println(chunk);
     }
 }

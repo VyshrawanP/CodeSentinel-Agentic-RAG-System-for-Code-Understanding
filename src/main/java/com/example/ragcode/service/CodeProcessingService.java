@@ -6,9 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+
 @Service
 public class CodeProcessingService {
 
+    private final ChunkingService chunkingService;
     private final EmbeddingService embeddingService;
     private final RetrievalService retrievalService;
     private final LLMService llmService;
@@ -16,22 +18,24 @@ public class CodeProcessingService {
     public CodeProcessingService(
             EmbeddingService embeddingService,
             RetrievalService retrievalService,
-            LLMService llmService
+            LLMService llmService,
+            ChunkingService chunkingService
     ) {
         this.embeddingService = embeddingService;
         this.retrievalService = retrievalService;
         this.llmService = llmService;
+        this.chunkingService = chunkingService;
     }
 
     public void processFile(MultipartFile file) throws Exception {
 
-        String content = new String(file.getBytes());
+      String code = new String(file.getBytes());
 
-        List<String> chunks = ChunkingUtil.chunkCode(content);
+List<String> chunks = chunkingService.chunkCode(code);
 
-        for (String chunk : chunks) {
-            embeddingService.storeEmbedding(chunk);
-        }
+for(String chunk : chunks){
+    embeddingService.storeEmbedding(chunk);
+}
     }
     public String testGrok() {
 
