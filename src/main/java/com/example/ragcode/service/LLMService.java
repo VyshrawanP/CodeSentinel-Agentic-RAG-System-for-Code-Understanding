@@ -7,6 +7,12 @@ import java.util.List;
 @Service
 public class LLMService {
 
+    private final GrokService grokService;
+
+    public LLMService(GrokService grokService) {
+        this.grokService = grokService;
+    }
+
     public String generateExplanation(String question, List<String> chunks) {
 
         String context = String.join("\n", chunks);
@@ -18,11 +24,9 @@ public class LLMService {
         Question:
         %s
 
-        Explain clearly.
+        Explain the Java code clearly.
         """.formatted(context, question);
 
-        // call OpenAI API here
-
-        return "Generated explanation based on retrieved code.";
+        return grokService.generateResponse(prompt);
     }
 }
