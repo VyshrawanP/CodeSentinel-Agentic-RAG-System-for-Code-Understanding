@@ -16,20 +16,32 @@ public class LLMService {
         return grokService.generateResponse(prompt);
     }
 
-    public String generateExplanation(String question, List<String> chunks) {
+   public String generateExplanation(String question, List<String> chunks) {
 
-        String context = String.join("\n", chunks);
+    StringBuilder context = new StringBuilder();
 
-        String prompt = """
-        Context:
-        %s
-
-        Question:
-        %s
-
-        Explain the Java code clearly.
-        """.formatted(context, question);
-
-        return grokService.generateResponse(prompt);
+    for(String chunk : chunks){
+        context.append(chunk).append("\n\n");
     }
+
+    String prompt = """
+Context:
+%s
+
+Question:
+%s
+
+Answer clearly and explain the code.
+""".formatted(context.toString(), question);
+
+    System.out.println("LLM Prompt:");
+    System.out.println(prompt);
+
+    String response = grokService.generateResponse(prompt);
+
+    System.out.println("LLM Response:");
+    System.out.println(response);
+
+    return response;
+}
 }

@@ -1,11 +1,9 @@
 package com.example.ragcode.service;
 
-import com.example.ragcode.rag.ChunkingUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
 
 @Service
 public class CodeProcessingService {
@@ -27,27 +25,40 @@ public class CodeProcessingService {
         this.chunkingService = chunkingService;
     }
 
+    // INGEST CODE
     public void processFile(MultipartFile file) throws Exception {
 
-      String code = new String(file.getBytes());
+        String code = new String(file.getBytes());
 
-List<String> chunks = chunkingService.chunkCode(code);
+        List<String> chunks = chunkingService.chunkCode(code);
 
-for(String chunk : chunks){
-    embeddingService.storeEmbedding(chunk);
-}
+        for(String chunk : chunks){
+            embeddingService.storeEmbedding(chunk);
+        }
     }
+
+    // TEST GROQ
     public String testGrok() {
 
-    String prompt = "Explain what a Java class is in simple terms.";
+        String prompt = "Explain what a Java class is in simple terms.";
 
-    return llmService.askLLM(prompt);
-}
+        return llmService.askLLM(prompt);
+    }
 
+    // MAIN RAG PIPELINE
     public String answerQuestion(String question) {
 
-        List<String> relevantChunks = retrievalService.retrieve(question);
+        System.out.println("User Question:");
+        System.out.println(question);
 
-        return llmService.generateExplanation(question, relevantChunks);
+        // STEP 1
+        List<String> relevantChunks =
+                retrievalService.retrieve(question);
+
+        // STEP 2
+        String answer =
+                llmService.generateExplanation(question, relevantChunks);
+
+        return answer;
     }
 }

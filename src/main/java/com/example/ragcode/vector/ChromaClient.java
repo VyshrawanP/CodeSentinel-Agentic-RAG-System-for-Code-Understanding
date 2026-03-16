@@ -10,55 +10,66 @@ import java.util.UUID;
 @Service
 public class ChromaClient {
 
-    private final WebClient webClient;
+    private final WebClient webClient = WebClient.builder()
+            .baseUrl("http://127.0.0.1:8001/api/v2")
+            .build();
 
-    // your collection UUID
-    private static final String COLLECTION_ID =
-            "6479f30c-09e9-402d-8443-ad4378bafe75";
+    private final String COLLECTION =
+            "/tenants/default_tenant/databases/default_database/collections/c931b9b0-27ed-4bae-bbce-b0496184879d";
 
-    public ChromaClient() {
-        this.webClient = WebClient.builder()
-                .baseUrl("http://localhost:8001/api/v2")
-                .build();
+    // STORE CHUNK
+    public void storeChunk(String chunk) {
+
+        System.out.println("ChromaClient called");
+        System.out.println("Sending request to Chroma...");
+
+        Map<String, Object> body = Map.of(
+                "ids", List.of(UUID.randomUUID().toString()),
+                "documents", List.of(chunk),
+                "embeddings", List.of(List.of(0.1,0.2,0.3,0.4))
+        );
+
+        try {
+
+            String response = webClient.post()
+                    .uri(COLLECTION + "/add")
+                    .bodyValue(body)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            System.out.println("Chroma response: " + response);
+
+        } catch (Exception e) {
+
+            System.out.println("ERROR connecting to Chroma");
+            e.printStackTrace();
+
+        }
+
+        System.out.println("Finished Chroma call");
     }
 
-   public void storeChunk(String chunk) {
+    // SEARCH CHUNKS
+    public List<String> searchChunks(List<Double> embedding) {
 
-    System.out.println("ChromaClient called");
+        System.out.println("Searching Chroma for similar chunks");
 
-    List<Double> embedding = List.of(
-            Math.random(),
-            Math.random(),
-            Math.random(),
-            Math.random()
-    );
+        Map<String, Object> body = Map.of(
+                "query_embeddings", List.of(embedding),
+                "n_results", 3
+        );
 
-    Map<String, Object> body = Map.of(
-            "ids", List.of(UUID.randomUUID().toString()),
-            "documents", List.of(chunk),
-            "embeddings", List.of(embedding)
-    );
-
-    System.out.println("Sending request to Chroma...");
-
-    try {
-
-        String response = webClient.post()
-                .uri("/tenants/default_tenant/databases/default_database/collections/6479f30c-09e9-402d-8443-ad4378bafe75/add")
+        Map response = webClient.post()
+                .uri(COLLECTION + "/query")
                 .bodyValue(body)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(Map.class)
                 .block();
 
-        System.out.println("Chroma response: " + response);
+        List<List<String>> documents =
+                (List<List<String>>) response.get("documents");
 
-    } catch (Exception e) {
-
-        System.out.println("ERROR connecting to Chroma");
-        e.printStackTrace();
-
+        return documents.get(0);
     }
-
-    System.out.println("Finished Chroma call");
-}
 }
