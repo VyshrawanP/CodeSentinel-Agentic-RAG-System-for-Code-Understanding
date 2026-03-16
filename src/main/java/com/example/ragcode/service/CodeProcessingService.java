@@ -33,6 +33,12 @@ public class CodeProcessingService {
             embeddingService.storeEmbedding(chunk);
         }
     }
+    public String testGrok() {
+
+    String prompt = "Explain what a Java class is in simple terms.";
+
+    return llmService.askLLM(prompt);
+}
 
     public String answerQuestion(String question) {
 

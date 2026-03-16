@@ -21,6 +21,11 @@ public class CodeController {
         return "File processed successfully";
     }
 
+    @GetMapping("/grok-test")
+public String grokTest() {
+    return service.testGrok();
+}
+
     @GetMapping("/test")
     public String test() {
         return "CodeSentinel running";

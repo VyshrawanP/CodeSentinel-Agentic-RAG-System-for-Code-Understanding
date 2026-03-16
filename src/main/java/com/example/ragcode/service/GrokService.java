@@ -1,12 +1,11 @@
 package com.example.ragcode.service;
+
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-
 
 @Service
 public class GrokService {
@@ -15,14 +14,14 @@ public class GrokService {
     private String apiKey;
 
     private final WebClient webClient = WebClient.builder()
-            .baseUrl("https://api.x.ai/v1")
+            .baseUrl("https://api.groq.com/openai/v1")
             .build();
 
     @SuppressWarnings("unchecked")
     public String generateResponse(String prompt) {
 
         Map<String, Object> request = Map.of(
-                "model", "grok-beta",
+                "model", "llama-3.3-70b-versatile",
                 "messages", List.of(
                         Map.of("role", "user", "content", prompt)
                 )
@@ -31,6 +30,7 @@ public class GrokService {
         Map<String, Object> response = webClient.post()
                 .uri("/chat/completions")
                 .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(Map.class)

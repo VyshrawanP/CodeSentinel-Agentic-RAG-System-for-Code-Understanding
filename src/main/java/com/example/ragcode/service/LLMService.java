@@ -12,6 +12,9 @@ public class LLMService {
     public LLMService(GrokService grokService) {
         this.grokService = grokService;
     }
+        public String askLLM(String prompt) {
+        return grokService.generateResponse(prompt);
+    }
 
     public String generateExplanation(String question, List<String> chunks) {
 
